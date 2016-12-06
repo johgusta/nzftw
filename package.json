@@ -11,7 +11,8 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server --port 5000 --content-base build",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "heroku-postbuild": "webpack"
   },
   "dependencies": {
     "express": "^4.14.0",
