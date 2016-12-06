@@ -23,11 +23,16 @@ function preload() {
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('jessica', 'assets/jessica.png', 64, 64);
+    game.load.spritesheet('johan', 'assets/johan.png', 64, 64);
 }
 
 var platforms;
-var player;
+var jessica;
+var johan;
+var players = [];
+
 var cursors;
+var wasd;
 var stars;
 
 var score = 0;
@@ -66,23 +71,36 @@ function create() {
 
 
     // The player and its settings
-    player = game.add.sprite(32, game.world.height - 150, 'jessica');
+    jessica = game.add.sprite(128, game.world.height - 150, 'jessica');
+    johan = game.add.sprite(32, game.world.height - 150, 'johan');
 
-    //  Our two animations, walking left and right.
-    //player.animations.add('left', [0, 1, 2, 3], 10, true);
-    //player.animations.add('right', [5, 6, 7, 8], 10, true);
-    setUpJessicaAnimations(player);
+    players.push(jessica);
+    players.push(johan);
+
+    players.forEach(function (player) {
+        //  Our two animations, walking left and right.
+        setUpAnimations(player);
+
+        //  We need to enable physics on the player
+        game.physics.arcade.enable(player);
+
+        player.enableBody = true;
+
+        //  Player physics properties. Give the little guy a slight bounce.
+        player.body.bounce.y = 0.1;
+        player.body.gravity.y = 500;
+        player.body.collideWorldBounds = true;
+    });
 
 
-    //  We need to enable physics on the player
-    game.physics.arcade.enable(player);
+    jessica.cursors = game.input.keyboard.createCursorKeys();
 
-    //  Player physics properties. Give the little guy a slight bounce.
-    player.body.bounce.y = 0.1;
-    player.body.gravity.y = 500;
-    player.body.collideWorldBounds = true;
-
-    cursors = game.input.keyboard.createCursorKeys();
+    johan.cursors = {
+        up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+        down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+        left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+        right: game.input.keyboard.addKey(Phaser.Keyboard.D)
+    };
 
     stars = game.add.group();
 
@@ -101,12 +119,11 @@ function create() {
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
 
-    scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-    game.add.text(500, 16, 'Race of the Knupp', { fontSize: '32px', fill: '#000' });
+    scoreText = game.add.text(16, 16, 'Vuxenpoäng: 0', { fontSize: '32px', fill: '#000' });
+    game.add.text(500, 16, 'Race of the Knupps', { fontSize: '32px', fill: '#000' });
 }
 
-function setUpJessicaAnimations(character) {
-
+function setUpAnimations(character) {
     character.animations.add('left', [0, 1, 2, 3, 4, 5, 6, 7, 8].map(function (index) {
         return 9 * 13 + index;
     }), 15, true);
@@ -117,19 +134,28 @@ function setUpJessicaAnimations(character) {
 
 function update() {
     //  Collide the player and the stars with the platforms
-    var hitPlatform = game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(stars, platforms);
 
     //  Reset the players velocity (movement)
-    player.body.velocity.x = 0;
+    players.forEach(function (player) {
+        player.body.velocity.x = 0;
 
-    if (cursors.left.isDown) {
+        controlPlayer(player);
+
+        game.physics.arcade.overlap(player, stars, collectStar, null, this);
+    });
+}
+
+function controlPlayer(player) {
+    var hitPlatform = game.physics.arcade.collide(player, platforms);
+    var playerCursors = player.cursors;
+    if (playerCursors.left.isDown) {
         //  Move to the left
         player.body.velocity.x = -150;
 
         player.animations.play('left');
     }
-    else if (cursors.right.isDown) {
+    else if (playerCursors.right.isDown) {
         //  Move to the right
         player.body.velocity.x = 150;
 
@@ -143,12 +169,10 @@ function update() {
     }
 
     //  Allow the player to jump if they are touching the ground.
-    if (cursors.up.isDown && player.body.touching.down && hitPlatform)
+    if (playerCursors.up.isDown && player.body.touching.down && hitPlatform)
     {
         player.body.velocity.y = -450;
     }
-
-    game.physics.arcade.overlap(player, stars, collectStar, null, this);
 }
 
 function collectStar (player, star) {
