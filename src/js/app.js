@@ -1,3 +1,9 @@
 require('./main.css');
-document.write('It works!');
-document.write(require('./content.js'));
+var Game = require('./game.js');
+
+var mainContent = document.getElementById('main-content');
+var gameContainer = document.createElement('div');
+gameContainer.classList.add('game-container');
+mainContent.appendChild(gameContainer);
+
+var game = new Game(gameContainer);
