@@ -11,7 +11,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server --port 5000 --content-base build",
-    "prestart": "npm run build",
+    "prestart": "npm install && npm run build",
     "start": "node server/server.js"
   },
   "dependencies": {
