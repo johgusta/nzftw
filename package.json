@@ -11,9 +11,10 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server --port 5000 --content-base build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/server.js"
   },
   "dependencies": {
+    "express": "^4.14.0",
     "phaser": "^2.6.2"
   }
 }
