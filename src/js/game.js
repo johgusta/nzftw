@@ -22,6 +22,7 @@ function preload() {
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.spritesheet('jessica', 'assets/jessica.png', 64, 64);
 }
 
 var platforms;
@@ -65,7 +66,13 @@ function create() {
 
 
     // The player and its settings
-    player = game.add.sprite(32, game.world.height - 150, 'dude');
+    player = game.add.sprite(32, game.world.height - 150, 'jessica');
+
+    //  Our two animations, walking left and right.
+    //player.animations.add('left', [0, 1, 2, 3], 10, true);
+    //player.animations.add('right', [5, 6, 7, 8], 10, true);
+    setUpJessicaAnimations(player);
+
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
@@ -74,10 +81,6 @@ function create() {
     player.body.bounce.y = 0.1;
     player.body.gravity.y = 500;
     player.body.collideWorldBounds = true;
-
-    //  Our two animations, walking left and right.
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
 
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -100,6 +103,16 @@ function create() {
 
     scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
     game.add.text(500, 16, 'Race of the Knupp', { fontSize: '32px', fill: '#000' });
+}
+
+function setUpJessicaAnimations(character) {
+
+    character.animations.add('left', [0, 1, 2, 3, 4, 5, 6, 7, 8].map(function (index) {
+        return 9 * 13 + index;
+    }), 15, true);
+    character.animations.add('right', [0, 1, 2, 3, 4, 5, 6, 7, 8].map(function (index) {
+        return 11 * 13 + index;
+    }), 15, true);
 }
 
 function update() {
@@ -126,7 +139,7 @@ function update() {
         //  Stand still
         player.animations.stop();
 
-        player.frame = 4;
+        player.frame = (13 * 2);
     }
 
     //  Allow the player to jump if they are touching the ground.
