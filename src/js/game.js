@@ -99,6 +99,7 @@ function create() {
     }
 
     scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    game.add.text(500, 16, 'Race of the Knupp', { fontSize: '32px', fill: '#000' });
 }
 
 function update() {
