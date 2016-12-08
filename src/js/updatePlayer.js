@@ -1,4 +1,4 @@
-function updatePlayer(player) {
+module.exports = function updatePlayer(player) {
     var game = player.game;
     var platforms = game.platforms;
     var stars = game.stars;
@@ -40,7 +40,7 @@ function updatePlayer(player) {
     if (playerCursors.up.isDown && isTouchingPlatform) {
         player.body.velocity.y = -450;
     }
-}
+};
 
 function collectStar (player, star) {
     // Removes the star from the screen
@@ -50,5 +50,3 @@ function collectStar (player, star) {
     var game = player.game;
     game.changeScore(star.value);
 }
-
-module.exports = updatePlayer;

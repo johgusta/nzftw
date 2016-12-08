@@ -1,4 +1,4 @@
-function initializePlayer(game, x, y, sprite, cursors) {
+module.exports = function initializePlayer(game, x, y, sprite, cursors) {
     var player = game.add.sprite(x, y, sprite);
     player.game = game;
     player.cursors = cursors;
@@ -23,6 +23,4 @@ function initializePlayer(game, x, y, sprite, cursors) {
     }), 15, true);
 
     return player;
-}
-
-module.exports = initializePlayer;
+};
