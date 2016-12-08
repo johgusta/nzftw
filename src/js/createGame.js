@@ -75,8 +75,8 @@ function createStars(game) {
 
 function createScoring(game) {
     var scoreText = 'Vuxenpoäng:';
-    game.scoreText = game.add.text(16, 16, scoreText + 0, { fontSize: '32px', fill: '#000' });
-    game.score = 0;
+    game.scoreText = game.add.text(16, 16, scoreText + game.score, { fontSize: '32px', fill: '#000' });
+
     game.changeScore = function changeScore(change) {
         game.score += change;
         game.scoreText.text = scoreText + game.score;
