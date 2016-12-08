@@ -12,7 +12,7 @@ module.exports = function updateGame(game) {
         return star.alive;
     }).length === 0) {
         console.log('game over!');
-        game.state.start('win');
+        game.state.start('win', false);
 
     }
 };

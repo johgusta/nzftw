@@ -1,4 +1,5 @@
-var initializePlayer = require('./initializePlayer.js');
+var initializePlayer = require('../initializePlayer.js');
+var createScoring = require('../createScoring.js');
 
 module.exports = function createGame(game) {
     //  We're going to be using physics, so enable the Arcade Physics system
@@ -71,15 +72,4 @@ function createStars(game) {
         //  This just gives each star a slightly random bounce value
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
-}
-
-function createScoring(game) {
-    var scoreText = 'Vuxenpoäng:';
-    game.scoreText = game.add.text(16, 16, scoreText + game.score, { fontSize: '32px', fill: '#000' });
-
-    game.changeScore = function changeScore(change) {
-        game.score += change;
-        game.scoreText.text = scoreText + game.score;
-    };
-    game.add.text(500, 16, 'Race of the Knupps', { fontSize: '32px', fill: '#000' });
 }
