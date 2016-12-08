@@ -4,6 +4,13 @@ module.exports = function createGame(game) {
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
+    createBackground(game);
+    createPlayers(game);
+    createStars(game);
+    createScoring(game);
+};
+
+function createBackground(game) {
     //  A simple background for our game
     game.add.sprite(0, 0, 'sky');
 
@@ -30,7 +37,9 @@ module.exports = function createGame(game) {
     ledge = game.platforms.create(-150, 250, 'ground');
 
     ledge.body.immovable = true;
+}
 
+function createPlayers(game) {
     // The player and its settings
     var jessica = initializePlayer(game, 128, game.world.height - 150, 'jessica',
         game.input.keyboard.createCursorKeys());
@@ -42,7 +51,9 @@ module.exports = function createGame(game) {
     });
 
     game.players = [jessica, johan];
+}
 
+function createStars(game) {
     game.stars = game.add.group();
 
     game.stars.enableBody = true;
@@ -60,7 +71,9 @@ module.exports = function createGame(game) {
         //  This just gives each star a slightly random bounce value
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
     }
+}
 
+function createScoring(game) {
     var scoreText = 'Vuxenpoäng:';
     game.scoreText = game.add.text(16, 16, scoreText + 0, { fontSize: '32px', fill: '#000' });
     game.score = 0;
@@ -69,4 +82,4 @@ module.exports = function createGame(game) {
         game.scoreText.text = scoreText + game.score;
     };
     game.add.text(500, 16, 'Race of the Knupps', { fontSize: '32px', fill: '#000' });
-};
+}
