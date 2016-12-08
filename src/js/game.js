@@ -69,7 +69,6 @@ function create() {
 
     ledge.body.immovable = true;
 
-
     // The player and its settings
     jessica = game.add.sprite(128, game.world.height - 150, 'jessica');
     johan = game.add.sprite(32, game.world.height - 150, 'johan');
@@ -90,8 +89,9 @@ function create() {
         player.body.bounce.y = 0.1;
         player.body.gravity.y = 500;
         player.body.collideWorldBounds = true;
+        player.body.mass = 100;
+        player.body.maxVelocity.x = 180;
     });
-
 
     jessica.cursors = game.input.keyboard.createCursorKeys();
 
@@ -138,26 +138,34 @@ function update() {
 
     //  Reset the players velocity (movement)
     players.forEach(function (player) {
-        player.body.velocity.x = 0;
-
         controlPlayer(player);
-
-        game.physics.arcade.overlap(player, stars, collectStar, null, this);
     });
 }
 
 function controlPlayer(player) {
     var hitPlatform = game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+    var isTouchingPlatform = player.body.touching.down && hitPlatform;
+    var speed = 350;
+
+    if (isTouchingPlatform) {
+        player.body.drag.x = speed - 1;
+    } else {
+        player.body.drag.x = 0;
+    }
+
+    player.body.acceleration.x = 0;
     var playerCursors = player.cursors;
     if (playerCursors.left.isDown) {
         //  Move to the left
-        player.body.velocity.x = -150;
+        player.body.acceleration.x = -speed;
 
         player.animations.play('left');
     }
     else if (playerCursors.right.isDown) {
         //  Move to the right
-        player.body.velocity.x = 150;
+        player.body.acceleration.x = speed;
 
         player.animations.play('right');
     }
@@ -169,8 +177,7 @@ function controlPlayer(player) {
     }
 
     //  Allow the player to jump if they are touching the ground.
-    if (playerCursors.up.isDown && player.body.touching.down && hitPlatform)
-    {
+    if (playerCursors.up.isDown && isTouchingPlatform) {
         player.body.velocity.y = -450;
     }
 }
