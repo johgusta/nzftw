@@ -17,17 +17,23 @@ function createBackground(game) {
 
     game.blocks = game.add.group();
     game.blocks.enableBody = true;
-    game.blocks.create(200, 420, 'block_7');
 
-    game.add.sprite(20, 20, 'block_1');
-    game.add.sprite(80, 80, 'block_2');
-    game.add.sprite(120, 120, 'block_3');
-    game.add.sprite(180, 180, 'block_4');
-    game.add.sprite(220, 220, 'block_5');
-    game.add.sprite(280, 280, 'block_6');
-    game.add.sprite(380, 380, 'block_8');
-    game.add.sprite(420, 420, 'block_9');
-    game.add.sprite(480, 480, 'block_10');
+    var boxX = 350;
+    var boxY = 100;
+
+    var blockSize = 80;
+
+    game.blocks.create(boxX + blockSize, boxY, 'block_1');
+    game.blocks.create(boxX, boxY, 'block_2');
+    game.blocks.create(boxX + 3 * blockSize, boxY, 'block_3');
+    game.blocks.create(boxX, boxY + 2 * blockSize, 'block_4');
+    game.blocks.create(boxX + 3 * blockSize, boxY + 2 * blockSize, 'block_5');
+    game.blocks.create(boxX + blockSize, boxY + 2 * blockSize, 'block_6');
+    game.blocks.create(boxX, boxY + 4 * blockSize, 'block_7');
+    game.blocks.create(boxX + blockSize, boxY + 3 * blockSize, 'block_8');
+    game.blocks.create(boxX + 2 * blockSize, boxY + 3 * blockSize, 'block_9');
+    game.blocks.create(boxX + 3 * blockSize, boxY + 4 * blockSize, 'block_10');
+
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
 //    game.platforms = game.add.group();
