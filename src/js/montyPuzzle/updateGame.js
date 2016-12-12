@@ -11,6 +11,9 @@ module.exports = function updateGame(game) {
     var selected = game.blocks.filter(function (block) {
         return block.isSelected;
     }).list[0];
+    if (!selected) {
+        return;
+    }
 
     blinkBlock(selected, alphaChange);
     var cursors = game.cursors;
@@ -32,18 +35,17 @@ module.exports = function updateGame(game) {
     if (selected.body.touching.left) {
         console.log('touching left');
     }
-
-    if (cursors.right.isDown) {
-        selected.body.velocity.x = blockSpeed;
-//        blinkBlock(selected, alphaChange * 2);
-    } else if (cursors.left.isDown) {
-        selected.body.velocity.x = -blockSpeed;
-//        blinkBlock(selected, alphaChange * 2);
-    } else if (cursors.up.isDown) {
+    if (cursors.up.isDown && !selected.body.touching.up) {
         selected.body.velocity.y = -blockSpeed;
 //        blinkBlock(selected, alphaChange * 2);
-    } else if (cursors.down.isDown) {
+    } else if (cursors.down.isDown && !selected.body.touching.down) {
         selected.body.velocity.y = blockSpeed;
+//        blinkBlock(selected, alphaChange * 2);
+    } else if (cursors.right.isDown && !selected.body.touching.right) {
+        selected.body.velocity.x = blockSpeed;
+//        blinkBlock(selected, alphaChange * 2);
+    } else if (cursors.left.isDown && !selected.body.touching.left) {
+        selected.body.velocity.x = -blockSpeed;
 //        blinkBlock(selected, alphaChange * 2);
     }
 //    game.players.forEach(function (player) {

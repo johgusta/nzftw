@@ -12,24 +12,9 @@ module.exports = function createGame(game) {
 
     createBackground(game);
 
-    game.borders = game.add.group();
-    game.borders.enableBody = true;
+    createBorders(game);
 
-    var border = game.borders.create(boxX, boxY - 22, 'star');
-    border.scale.setTo(4 * blockSize / 24, 1);
-
-    border = game.borders.create(boxX, boxY + 5 * blockSize, 'star');
-    border.scale.setTo(4 * blockSize / 24, 1);
-
-    border = game.borders.create(boxX - 24, boxY, 'star');
-    border.scale.setTo(1, 5 * blockSize / 22);
-
-    border = game.borders.create(boxX + 4 * blockSize, boxY, 'star');
-    border.scale.setTo(1, 5 * blockSize / 22);
-
-    game.borders.forEach(function (border) {
-        border.body.immovable = true;
-    });
+    createBlocks(game);
 
 
 //    createPlayers(game);
@@ -41,9 +26,41 @@ function createBackground(game) {
     //  A simple background for our game
     game.add.sprite(0, 0, 'background');
 
+    game.cursors = game.input.keyboard.createCursorKeys();
+
+}
+
+function createBorders(game) {
+    var borderSprite = {
+        name: 'block_8',
+        width: 80,
+        height: 80
+    };
+
+    game.borders = game.add.group();
+    game.borders.enableBody = true;
+
+    var border = game.borders.create(boxX, boxY - borderSprite.height, borderSprite.name);
+    border.scale.setTo(4 * blockSize / borderSprite.width, 1);
+
+    border = game.borders.create(boxX, boxY + 5 * blockSize, borderSprite.name);
+    border.scale.setTo(4 * blockSize / borderSprite.width, 1);
+
+    border = game.borders.create(boxX - borderSprite.width, boxY, borderSprite.name);
+    border.scale.setTo(1, 5 * blockSize / borderSprite.height);
+
+    border = game.borders.create(boxX + 4 * blockSize, boxY, borderSprite.name);
+    border.scale.setTo(1, 5 * blockSize / borderSprite.height);
+
+    game.borders.forEach(function (border) {
+        border.body.immovable = true;
+    });
+}
+
+function createBlocks(game) {
+
     game.blocks = game.add.group();
     game.blocks.enableBody = true;
-
 
     createBlock(game, 1, 0, 2, 2, 'block_1');
     createBlock(game, 0, 0, 1, 2, 'block_2');
@@ -55,20 +72,18 @@ function createBackground(game) {
     createBlock(game, 1, 3, 1, 1, 'block_8');
     createBlock(game, 2, 3, 1, 1, 'block_9');
     createBlock(game, 3, 4, 1, 1, 'block_10');
-
-
-    game.cursors = game.input.keyboard.createCursorKeys();
-
 }
-
 
 function createBlock(game, x, y, width, height, sprite, size, isSelected) {
 
-    var block = game.blocks.create(boxX + x * blockSize + 1, boxY + y * blockSize + 1, sprite);
-    block.width -= 1;
-    block.height -= 1;
+    var block = game.blocks.create(boxX + x * blockSize, boxY + y * blockSize, sprite);
+//    block.scale.setTo((block.width - 1) / block.width, (block.height - 1) / block.height);
+//    block.width -= 1;
+//    block.height -= 1;
     block.blockSize = blockSize;
     block.isSelected = isSelected;
+    block.body.friction.x = 0;
+    block.body.friction.y = 0;
 //    block.body.immovable = true;
 }
 
