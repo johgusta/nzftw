@@ -1,12 +1,38 @@
 var initializePlayer = require('../initializePlayer.js');
 //var createScoring = require('../createScoring.js');
 
+var boxX = 350;
+var boxY = 100;
+
+var blockSize = 80;
+
 module.exports = function createGame(game) {
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     createBackground(game);
-    createPlayers(game);
+
+    game.borders = game.add.group();
+    game.borders.enableBody = true;
+
+    var border = game.borders.create(boxX, boxY - 22, 'star');
+    border.scale.setTo(4 * blockSize / 24, 1);
+
+    border = game.borders.create(boxX, boxY + 5 * blockSize, 'star');
+    border.scale.setTo(4 * blockSize / 24, 1);
+
+    border = game.borders.create(boxX - 24, boxY, 'star');
+    border.scale.setTo(1, 5 * blockSize / 22);
+
+    border = game.borders.create(boxX + 4 * blockSize, boxY, 'star');
+    border.scale.setTo(1, 5 * blockSize / 22);
+
+    game.borders.forEach(function (border) {
+        border.body.immovable = true;
+    });
+
+
+//    createPlayers(game);
 //    createStars(game);
 //    createScoring(game);
 };
@@ -18,46 +44,32 @@ function createBackground(game) {
     game.blocks = game.add.group();
     game.blocks.enableBody = true;
 
-    var boxX = 350;
-    var boxY = 100;
 
-    var blockSize = 80;
-
-    game.blocks.create(boxX + blockSize, boxY, 'block_1');
-    game.blocks.create(boxX, boxY, 'block_2');
-    game.blocks.create(boxX + 3 * blockSize, boxY, 'block_3');
-    game.blocks.create(boxX, boxY + 2 * blockSize, 'block_4');
-    game.blocks.create(boxX + 3 * blockSize, boxY + 2 * blockSize, 'block_5');
-    game.blocks.create(boxX + blockSize, boxY + 2 * blockSize, 'block_6');
-    game.blocks.create(boxX, boxY + 4 * blockSize, 'block_7');
-    game.blocks.create(boxX + blockSize, boxY + 3 * blockSize, 'block_8');
-    game.blocks.create(boxX + 2 * blockSize, boxY + 3 * blockSize, 'block_9');
-    game.blocks.create(boxX + 3 * blockSize, boxY + 4 * blockSize, 'block_10');
+    createBlock(game, 1, 0, 2, 2, 'block_1');
+    createBlock(game, 0, 0, 1, 2, 'block_2');
+    createBlock(game, 3, 0, 1, 2, 'block_3');
+    createBlock(game, 0, 2, 1, 2, 'block_4');
+    createBlock(game, 3, 2, 1, 2, 'block_5');
+    createBlock(game, 1, 2, 2, 1, 'block_6');
+    createBlock(game, 0, 4, 1, 1, 'block_7', [], true);
+    createBlock(game, 1, 3, 1, 1, 'block_8');
+    createBlock(game, 2, 3, 1, 1, 'block_9');
+    createBlock(game, 3, 4, 1, 1, 'block_10');
 
 
-    //  The platforms group contains the ground and the 2 ledges we can jump on
-//    game.platforms = game.add.group();
-//
-//    //  We will enable physics for any object that is created in this group
-//    game.platforms.enableBody = true;
-//
-//    // Here we create the ground.
-//    var ground = game.platforms.create(0, game.world.height - 64, 'ground');
-//
-//    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-//    ground.scale.setTo(2, 2);
-//
-//    //  This stops it from falling away when you jump on it
-//    ground.body.immovable = true;
+    game.cursors = game.input.keyboard.createCursorKeys();
 
-    //  Now let's create two ledges
-//    var ledge = game.platforms.create(400, 400, 'ground');
-//
-//    ledge.body.immovable = true;
-//
-//    ledge = game.platforms.create(-150, 250, 'ground');
-//
-//    ledge.body.immovable = true;
+}
+
+
+function createBlock(game, x, y, width, height, sprite, size, isSelected) {
+
+    var block = game.blocks.create(boxX + x * blockSize + 1, boxY + y * blockSize + 1, sprite);
+    block.width -= 1;
+    block.height -= 1;
+    block.blockSize = blockSize;
+    block.isSelected = isSelected;
+//    block.body.immovable = true;
 }
 
 function createPlayers(game) {
