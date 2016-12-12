@@ -4,6 +4,7 @@ window.Phaser = require('phaser/build/custom/phaser-split');require('./game.css'
 
 var winState = require('./winState.js');
 var testLevel = require('./testlevel/testLevel.js');
+var montyPuzzle = require('./montyPuzzle/montyPuzzle.js');
 
 function Game(gameContainer) {
 
@@ -16,11 +17,13 @@ function Game(gameContainer) {
     var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-container');
 
     game.state.add('test', testLevel);
+    game.state.add('montyPuzzle', montyPuzzle);
 
     game.state.add('win', winState);
 
     game.score = 0;
-    game.state.start('test');
+//    game.state.start('test');
+    game.state.start('montyPuzzle');
 }
 
 module.exports = Game;
