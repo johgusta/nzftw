@@ -1,4 +1,4 @@
-//var initializePlayer = require('../initializePlayer.js');
+var initializePlayer = require('../initializePlayer.js');
 //var createScoring = require('../createScoring.js');
 
 module.exports = function createGame(game) {
@@ -6,7 +6,7 @@ module.exports = function createGame(game) {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     createBackground(game);
-//    createPlayers(game);
+    createPlayers(game);
 //    createStars(game);
 //    createScoring(game);
 };
@@ -60,16 +60,16 @@ function createBackground(game) {
 //    ledge.body.immovable = true;
 }
 
-//function createPlayers(game) {
-//    // The player and its settings
-//    var jessica = initializePlayer(game, 128, game.world.height - 150, 'jessica',
-//        game.input.keyboard.createCursorKeys());
-//    var johan = initializePlayer(game, 32, game.world.height - 150, 'johan', {
-//        up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-//        down: game.input.keyboard.addKey(Phaser.Keyboard.S),
-//        left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-//        right: game.input.keyboard.addKey(Phaser.Keyboard.D)
-//    });
-//
-//    game.players = [jessica, johan];
-//}
+function createPlayers(game) {
+    // The player and its settings
+    var jessica = initializePlayer(game, 128, game.world.height - 150, 'jessica',
+        game.input.keyboard.createCursorKeys());
+    var johan = initializePlayer(game, 32, game.world.height - 150, 'johan', {
+        up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+        down: game.input.keyboard.addKey(Phaser.Keyboard.S),
+        left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+        right: game.input.keyboard.addKey(Phaser.Keyboard.D)
+    });
+
+    game.players = [jessica, johan];
+}

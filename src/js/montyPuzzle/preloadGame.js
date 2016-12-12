@@ -3,8 +3,8 @@ module.exports = function preloadGame(game) {
 //    game.load.image('ground', 'assets/platform.png');
 //    game.load.image('star', 'assets/star.png');
 //    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-//    game.load.spritesheet('jessica', 'assets/jessica.png', 64, 64);
-//    game.load.spritesheet('johan', 'assets/johan.png', 64, 64);
+    game.load.spritesheet('jessica', 'assets/jessica.png', 64, 64);
+    game.load.spritesheet('johan', 'assets/johan.png', 64, 64);
     game.load.image('background', 'assets/klotski_monty.png');
     game.load.image('block_1', 'assets/block_1.gif');
     game.load.image('block_2', 'assets/block_2.gif');

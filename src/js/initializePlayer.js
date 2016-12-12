@@ -22,5 +22,7 @@ module.exports = function initializePlayer(game, x, y, sprite, cursors) {
         return 11 * 13 + index;
     }), 15, true);
 
+    player.frame = (13 * 2);
+
     return player;
 };
