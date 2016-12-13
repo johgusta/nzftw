@@ -28,6 +28,9 @@ function createBackground(game) {
 
     game.cursors = game.input.keyboard.createCursorKeys();
 
+    game.controlKeys = {
+        space: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
+    };
 }
 
 function createBorders(game) {
@@ -61,6 +64,7 @@ function createBlocks(game) {
 
     game.blocks = game.add.group();
     game.blocks.enableBody = true;
+    game.blocks.selectedBlock = 6;
 
     createBlock(game, 1, 0, 2, 2, 'block_1');
     createBlock(game, 0, 0, 1, 2, 'block_2');
@@ -68,7 +72,7 @@ function createBlocks(game) {
     createBlock(game, 0, 2, 1, 2, 'block_4');
     createBlock(game, 3, 2, 1, 2, 'block_5');
     createBlock(game, 1, 2, 2, 1, 'block_6');
-    createBlock(game, 0, 4, 1, 1, 'block_7', [], true);
+    createBlock(game, 0, 4, 1, 1, 'block_7');
     createBlock(game, 1, 3, 1, 1, 'block_8');
     createBlock(game, 2, 3, 1, 1, 'block_9');
     createBlock(game, 3, 4, 1, 1, 'block_10');
@@ -81,7 +85,7 @@ function createBlock(game, x, y, width, height, sprite, size, isSelected) {
 //    block.width -= 1;
 //    block.height -= 1;
     block.blockSize = blockSize;
-    block.isSelected = isSelected;
+    //block.isSelected = isSelected;
     block.body.friction.x = 0;
     block.body.friction.y = 0;
 //    block.body.immovable = true;

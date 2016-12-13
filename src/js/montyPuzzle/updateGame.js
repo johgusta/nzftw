@@ -8,12 +8,16 @@ module.exports = function updateGame(game) {
     var alphaChange = 0.02;
     var blockSpeed = 100;
 
-    var selected = game.blocks.filter(function (block) {
-        return block.isSelected;
-    }).list[0];
-    if (!selected) {
-        return;
+    var controlKeys = game.controlKeys;
+    if (controlKeys.space.isDown && controlKeys.space.repeats === 0) {
+        game.blocks.selectedBlock = (game.blocks.selectedBlock + 1) % (game.blocks.children.length);
+
+        game.blocks.forEach(function (block) {
+            block.alpha = 1;
+            block.alphaChange = undefined;
+        })
     }
+    var selected = game.blocks.children[game.blocks.selectedBlock];
 
     blinkBlock(selected, alphaChange);
     var cursors = game.cursors;
