@@ -10,12 +10,7 @@ module.exports = function updateGame(game) {
 
     var controlKeys = game.controlKeys;
     if (controlKeys.space.isDown && controlKeys.space.repeats === 0) {
-        game.blocks.selectedBlock = (game.blocks.selectedBlock + 1) % (game.blocks.children.length);
-
-        game.blocks.forEach(function (block) {
-            block.alpha = 1;
-            block.alphaChange = undefined;
-        })
+        game.blocks.setSelectedBlock((game.blocks.selectedBlock + 1) % (game.blocks.children.length));
     }
     var selected = game.blocks.children[game.blocks.selectedBlock];
 

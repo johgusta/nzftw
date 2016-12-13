@@ -65,6 +65,14 @@ function createBlocks(game) {
     game.blocks = game.add.group();
     game.blocks.enableBody = true;
     game.blocks.selectedBlock = 6;
+    game.blocks.setSelectedBlock = function (newSelectedBlockId) {
+        game.blocks.selectedBlock = newSelectedBlockId;
+
+        game.blocks.forEach(function (block) {
+            block.alpha = 1;
+            block.alphaChange = undefined;
+        });
+    };
 
     createBlock(game, 1, 0, 2, 2, 'block_1');
     createBlock(game, 0, 0, 1, 2, 'block_2');
@@ -80,14 +88,21 @@ function createBlocks(game) {
 
 function createBlock(game, x, y, width, height, sprite, size, isSelected) {
 
+    var blockId = game.blocks.children.length;
     var block = game.blocks.create(boxX + x * blockSize, boxY + y * blockSize, sprite);
 //    block.scale.setTo((block.width - 1) / block.width, (block.height - 1) / block.height);
 //    block.width -= 1;
 //    block.height -= 1;
+    block.blockId = blockId;
     block.blockSize = blockSize;
     //block.isSelected = isSelected;
     block.body.friction.x = 0;
     block.body.friction.y = 0;
+    block.inputEnabled = true;
+    block.events.onInputDown.add(function () {
+        game.blocks.setSelectedBlock(block.blockId);
+    });
+
 //    block.body.immovable = true;
 }
 
