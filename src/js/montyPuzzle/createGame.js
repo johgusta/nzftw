@@ -1,14 +1,15 @@
 var initializePlayer = require('../initializePlayer.js');
 //var createScoring = require('../createScoring.js');
 
-var boxX = 350;
-var boxY = 100;
-
 var blockSize = 80;
 
 module.exports = function createGame(game) {
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    game.boxX = 350;
+    game.boxY = 100;
+    game.blockSize = blockSize;
 
     createBackground(game);
 
@@ -43,16 +44,16 @@ function createBorders(game) {
     game.borders = game.add.group();
     game.borders.enableBody = true;
 
-    var border = game.borders.create(boxX, boxY - borderSprite.height, borderSprite.name);
+    var border = game.borders.create(game.boxX, game.boxY - borderSprite.height, borderSprite.name);
     border.scale.setTo(4 * blockSize / borderSprite.width, 1);
 
-    border = game.borders.create(boxX, boxY + 5 * blockSize, borderSprite.name);
+    border = game.borders.create(game.boxX, game.boxY + 5 * blockSize, borderSprite.name);
     border.scale.setTo(4 * blockSize / borderSprite.width, 1);
 
-    border = game.borders.create(boxX - borderSprite.width, boxY, borderSprite.name);
+    border = game.borders.create(game.boxX - borderSprite.width, game.boxY, borderSprite.name);
     border.scale.setTo(1, 5 * blockSize / borderSprite.height);
 
-    border = game.borders.create(boxX + 4 * blockSize, boxY, borderSprite.name);
+    border = game.borders.create(game.boxX + 4 * blockSize, game.boxY, borderSprite.name);
     border.scale.setTo(1, 5 * blockSize / borderSprite.height);
 
     game.borders.forEach(function (border) {
@@ -89,7 +90,7 @@ function createBlocks(game) {
 function createBlock(game, x, y, width, height, sprite, size, isSelected) {
 
     var blockId = game.blocks.children.length;
-    var block = game.blocks.create(boxX + x * blockSize, boxY + y * blockSize, sprite);
+    var block = game.blocks.create(game.boxX + x * blockSize, game.boxY + y * blockSize, sprite);
 //    block.scale.setTo((block.width - 1) / block.width, (block.height - 1) / block.height);
 //    block.width -= 1;
 //    block.height -= 1;

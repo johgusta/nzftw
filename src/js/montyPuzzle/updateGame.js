@@ -2,8 +2,41 @@
 
 module.exports = function updateGame(game) {
     //  Collide the stars with the platforms
-    var hitBox = game.physics.arcade.collide(game.blocks);
-    var hitBorder = game.physics.arcade.collide(game.blocks, game.borders);
+    game.blocks.forEach(function (block) {
+        if (block.body.overlapX > 0) {
+            block.body.overlapX = 0;
+        }
+        if (block.body.overlapY > 0) {
+            block.body.overlapY = 0;
+        }
+        if (Math.abs(block.body.velocity.x) < 0.001) {
+            block.body.velocity.x = 0;
+            snapBlockToGridX(block);
+        }
+        if (Math.abs(block.body.velocity.y) < 0.001) {
+            block.body.velocity.y = 0;
+            snapBlockToGridY(block);
+        }
+    });
+    var hitBox = game.physics.arcade.collide(game.blocks, undefined, function blocksCollide(block1, block2) {
+        console.log('blocks collide!');
+        block1.body.touching.none = true;
+        block2.body.touching.none = true;
+
+        if (block2.body.overlapX > 0) {
+            block2.body.overlapX = 0;
+        }
+        if (block2.body.overlapY > 0) {
+            block2.body.overlapY = 0;
+        }
+        //block2.body.velocity.x = 0;
+        //block1.body.velocity.y = 0;
+        //block2.body.velocity.y = 0;
+    });
+    var hitBorder = game.physics.arcade.collide(game.blocks, game.borders, function blockCollideBorders(block1, border) {
+        console.log('blocks and border collide!');
+        block1.body.touching.none = true;
+    });
 
     var alphaChange = 0.02;
     var blockSpeed = 100;
@@ -16,9 +49,11 @@ module.exports = function updateGame(game) {
 
     blinkBlock(selected, alphaChange);
     var cursors = game.cursors;
-    if (hitBorder || hitBox) {
+    if (hitBorder) {
+        console.log('hit border: ' + hitBorder + ', hit box: ' + hitBox);
         selected.body.velocity.x = 0;
         selected.body.velocity.y = 0;
+
         blinkBlock(selected, alphaChange * 4);
     }
 
@@ -59,6 +94,18 @@ module.exports = function updateGame(game) {
 //
 //    }
 };
+
+function snapBlockToGridX(block) {
+    var game = block.game;
+    var xIndex = Math.round((block.body.x - game.boxX) / game.blockSize);
+    block.body.x = game.boxX + xIndex * game.blockSize;
+}
+
+function snapBlockToGridY(block) {
+    var game = block.game;
+    var yIndex = Math.round((block.body.y - game.boxY) / game.blockSize);
+    block.body.y = game.boxY + yIndex * game.blockSize;
+}
 
 function blinkBlock(block, alphaChange) {
     if (block.alphaChange === undefined) {
