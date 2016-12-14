@@ -1,99 +1,59 @@
 //var updatePlayer = require('./updatePlayer.js');
 
 module.exports = function updateGame(game) {
-    //  Collide the stars with the platforms
-    game.blocks.forEach(function (block) {
-        if (block.body.overlapX > 0) {
-            block.body.overlapX = 0;
-        }
-        if (block.body.overlapY > 0) {
-            block.body.overlapY = 0;
-        }
-        if (Math.abs(block.body.velocity.x) < 0.001) {
-            block.body.velocity.x = 0;
-            snapBlockToGridX(block);
-        }
-        if (Math.abs(block.body.velocity.y) < 0.001) {
-            block.body.velocity.y = 0;
-            snapBlockToGridY(block);
-        }
-    });
-    var hitBox = game.physics.arcade.collide(game.blocks, undefined, function blocksCollide(block1, block2) {
-        console.log('blocks collide!');
-        block1.body.touching.none = true;
-        block2.body.touching.none = true;
+    snapBlocksToGrid(game.blocks);
 
-        if (block2.body.overlapX > 0) {
-            block2.body.overlapX = 0;
-        }
-        if (block2.body.overlapY > 0) {
-            block2.body.overlapY = 0;
-        }
-        //block2.body.velocity.x = 0;
-        //block1.body.velocity.y = 0;
-        //block2.body.velocity.y = 0;
-    });
-    var hitBorder = game.physics.arcade.collide(game.blocks, game.borders, function blockCollideBorders(block1, border) {
-        console.log('blocks and border collide!');
-        block1.body.touching.none = true;
-    });
+    var hitBox = game.physics.arcade.collide(game.blocks);
+    var hitBorder = game.physics.arcade.collide(game.blocks, game.borders);
 
     var alphaChange = 0.02;
     var blockSpeed = 100;
 
     var controlKeys = game.controlKeys;
     if (controlKeys.space.isDown && controlKeys.space.repeats === 0) {
-        game.blocks.setSelectedBlock((game.blocks.selectedBlock + 1) % (game.blocks.children.length));
+        game.blocks.setSelectedBlock(
+            (game.blocks.selectedBlock + 1) % (game.blocks.children.length));
     }
     var selected = game.blocks.children[game.blocks.selectedBlock];
 
-    blinkBlock(selected, alphaChange);
     var cursors = game.cursors;
-    if (hitBorder) {
-        console.log('hit border: ' + hitBorder + ', hit box: ' + hitBox);
-        selected.body.velocity.x = 0;
-        selected.body.velocity.y = 0;
-
+    if (hitBorder || hitBox) {
         blinkBlock(selected, alphaChange * 4);
+    } else {
+        blinkBlock(selected, alphaChange);
     }
 
-    if (selected.body.touching.up) {
-        console.log('touching up');
-    }
-    if (selected.body.touching.down) {
-        console.log('touching down');
-    }
-    if (selected.body.touching.right) {
-        console.log('touching right');
-    }
-    if (selected.body.touching.left) {
-        console.log('touching left');
-    }
     if (cursors.up.isDown && !selected.body.touching.up) {
         selected.body.velocity.y = -blockSpeed;
-//        blinkBlock(selected, alphaChange * 2);
     } else if (cursors.down.isDown && !selected.body.touching.down) {
         selected.body.velocity.y = blockSpeed;
-//        blinkBlock(selected, alphaChange * 2);
     } else if (cursors.right.isDown && !selected.body.touching.right) {
         selected.body.velocity.x = blockSpeed;
-//        blinkBlock(selected, alphaChange * 2);
     } else if (cursors.left.isDown && !selected.body.touching.left) {
         selected.body.velocity.x = -blockSpeed;
-//        blinkBlock(selected, alphaChange * 2);
     }
-//    game.players.forEach(function (player) {
-//        updatePlayer(player);
-//    });
-//
-//    if (game.stars.children.filter(function (star) {
-//        return star.alive;
-//    }).length === 0) {
-//        console.log('game over!');
-//        game.state.start('win', false);
-//
-//    }
 };
+
+function snapBlocksToGrid(blocks) {
+    //Reset overlap and snap to grid if speed is below threshold value
+    var minimumSpeed = 0.001;
+    blocks.forEach(function (block) {
+        if (block.body.overlapX > 0) {
+            block.body.overlapX = 0;
+        }
+        if (block.body.overlapY > 0) {
+            block.body.overlapY = 0;
+        }
+        if (Math.abs(block.body.velocity.x) < minimumSpeed) {
+            block.body.velocity.x = 0;
+            snapBlockToGridX(block);
+        }
+        if (Math.abs(block.body.velocity.y) < minimumSpeed) {
+            block.body.velocity.y = 0;
+            snapBlockToGridY(block);
+        }
+    });
+}
 
 function snapBlockToGridX(block) {
     var game = block.game;
