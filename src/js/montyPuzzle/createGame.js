@@ -11,16 +11,12 @@ module.exports = function createGame(game) {
     game.boxY = 100;
     game.blockSize = blockSize;
 
-    createBackground(game);
-
     createBorders(game);
 
+    createBackground(game);
+
     createBlocks(game);
-
-
-//    createPlayers(game);
-//    createStars(game);
-//    createScoring(game);
+    createPlayers(game);
 };
 
 function createBackground(game) {
@@ -75,36 +71,29 @@ function createBlocks(game) {
         });
     };
 
-    createBlock(game, 1, 0, 2, 2, 'block_1');
-    createBlock(game, 0, 0, 1, 2, 'block_2');
-    createBlock(game, 3, 0, 1, 2, 'block_3');
-    createBlock(game, 0, 2, 1, 2, 'block_4');
-    createBlock(game, 3, 2, 1, 2, 'block_5');
-    createBlock(game, 1, 2, 2, 1, 'block_6');
-    createBlock(game, 0, 4, 1, 1, 'block_7');
-    createBlock(game, 1, 3, 1, 1, 'block_8');
-    createBlock(game, 2, 3, 1, 1, 'block_9');
-    createBlock(game, 3, 4, 1, 1, 'block_10');
+    createBlock(game, 1, 0, 'block_1');
+    createBlock(game, 0, 0, 'block_2');
+    createBlock(game, 3, 0, 'block_3');
+    createBlock(game, 0, 2, 'block_4');
+    createBlock(game, 3, 2, 'block_5');
+    createBlock(game, 1, 2, 'block_6');
+    createBlock(game, 0, 4, 'block_7');
+    createBlock(game, 1, 3, 'block_8');
+    createBlock(game, 2, 3, 'block_9');
+    createBlock(game, 3, 4, 'block_10');
 }
 
-function createBlock(game, x, y, width, height, sprite, size, isSelected) {
+function createBlock(game, x, y, sprite) {
 
     var blockId = game.blocks.children.length;
-    var block = game.blocks.create(game.boxX + x * blockSize, game.boxY + y * blockSize, sprite);
-//    block.scale.setTo((block.width - 1) / block.width, (block.height - 1) / block.height);
-//    block.width -= 1;
-//    block.height -= 1;
+    var block = game.blocks.create(game.boxX + x * blockSize,
+        game.boxY + y * blockSize, sprite);
     block.blockId = blockId;
     block.blockSize = blockSize;
-    //block.isSelected = isSelected;
-    block.body.friction.x = 0;
-    block.body.friction.y = 0;
     block.inputEnabled = true;
     block.events.onInputDown.add(function () {
         game.blocks.setSelectedBlock(block.blockId);
     });
-
-//    block.body.immovable = true;
 }
 
 function createPlayers(game) {
