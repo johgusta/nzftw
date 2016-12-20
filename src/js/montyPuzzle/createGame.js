@@ -4,16 +4,19 @@ var initializePlayer = require('../initializePlayer.js');
 var blockSize = 80;
 
 module.exports = function createGame(game) {
-    //  We're going to be using physics, so enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.startSystem(Phaser.Physics.P2JS);
+
+    game.physics.p2.restitution = 0;
 
     game.boxX = 350;
     game.boxY = 100;
     game.blockSize = blockSize;
 
-    createBorders(game);
+    var bounds = new Phaser.Rectangle(350, 100, 4 * blockSize, 5 * blockSize);
 
     createBackground(game);
+
+    createBoxBounds(game, bounds);
 
     createBlocks(game);
     createPlayers(game);
@@ -29,37 +32,9 @@ function createBackground(game) {
         space: game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     };
 }
-
-function createBorders(game) {
-    var borderSprite = {
-        name: 'block_8',
-        width: 80,
-        height: 80
-    };
-
-    game.borders = game.add.group();
-    game.borders.enableBody = true;
-
-    var border = game.borders.create(game.boxX, game.boxY - borderSprite.height, borderSprite.name);
-    border.scale.setTo(4 * blockSize / borderSprite.width, 1);
-
-    border = game.borders.create(game.boxX, game.boxY + 5 * blockSize, borderSprite.name);
-    border.scale.setTo(4 * blockSize / borderSprite.width, 1);
-
-    border = game.borders.create(game.boxX - borderSprite.width, game.boxY, borderSprite.name);
-    border.scale.setTo(1, 5 * blockSize / borderSprite.height);
-
-    border = game.borders.create(game.boxX + 4 * blockSize, game.boxY, borderSprite.name);
-    border.scale.setTo(1, 5 * blockSize / borderSprite.height);
-
-    game.borders.forEach(function (border) {
-        border.body.immovable = true;
-    });
-}
-
 function createBlocks(game) {
 
-    game.blocks = game.add.group();
+    game.blocks = game.add.physicsGroup(Phaser.Physics.P2JS);
     game.blocks.enableBody = true;
     game.blocks.selectedBlock = 6;
     game.blocks.setSelectedBlock = function (newSelectedBlockId) {
@@ -71,29 +46,82 @@ function createBlocks(game) {
         });
     };
 
-    createBlock(game, 1, 0, 'block_1');
-    createBlock(game, 0, 0, 'block_2');
-    createBlock(game, 3, 0, 'block_3');
-    createBlock(game, 0, 2, 'block_4');
-    createBlock(game, 3, 2, 'block_5');
-    createBlock(game, 1, 2, 'block_6');
-    createBlock(game, 0, 4, 'block_7');
-    createBlock(game, 1, 3, 'block_8');
-    createBlock(game, 2, 3, 'block_9');
-    createBlock(game, 3, 4, 'block_10');
+    createBlock(game, 1, 0, 2, 2, 'block_1');
+    createBlock(game, 0, 0, 1, 2, 'block_2');
+    createBlock(game, 3, 0, 1, 2, 'block_3');
+    createBlock(game, 0, 2, 1, 2, 'block_4');
+    createBlock(game, 3, 2, 1, 2, 'block_5');
+    createBlock(game, 1, 2, 2, 1, 'block_6');
+    createBlock(game, 0, 4, 1, 1, 'block_7');
+    createBlock(game, 1, 3, 1, 1, 'block_8');
+    createBlock(game, 2, 3, 1, 1, 'block_9');
+    createBlock(game, 3, 4, 1, 1, 'block_10');
 }
 
-function createBlock(game, x, y, sprite) {
+function createBlock(game, x, y, width, height, sprite) {
 
     var blockId = game.blocks.children.length;
-    var block = game.blocks.create(game.boxX + x * blockSize,
-        game.boxY + y * blockSize, sprite);
+    var blockWidth = width * blockSize;
+    var blockHeight = height * blockSize;
+    var block = game.blocks.create(game.boxX + x * blockSize + blockWidth / 2,
+        game.boxY + y * blockSize + blockHeight / 2, sprite);
+    //block.anchor.setTo(0, 0);
+    block.body.setRectangle(blockWidth, blockHeight);
+
     block.blockId = blockId;
     block.blockSize = blockSize;
     block.inputEnabled = true;
     block.events.onInputDown.add(function () {
         game.blocks.setSelectedBlock(block.blockId);
     });
+}
+
+function createBoxBounds(game, bounds) {
+    //  Create a new custom sized bounds, within the world bounds
+    game.customBounds = { left: null, right: null, top: null, bottom: null };
+
+    createPreviewBounds(game, bounds);
+
+    //  Just to display the bounds
+    var graphics = game.add.graphics(bounds.x, bounds.y);
+    graphics.lineStyle(4, 0xffd900, 2);
+    graphics.drawRect(0, 0, bounds.width, bounds.height);
+}
+
+function createPreviewBounds(game, rectangle) {
+    var x = rectangle.x;
+    var y = rectangle.y;
+    var w = rectangle.width;
+    var h = rectangle.height;
+
+    var customBounds = game.customBounds;
+
+    var sim = game.physics.p2;
+
+    //  If you want to use your own collision group then set it here and un-comment the lines below
+    var mask = sim.boundsCollisionGroup.mask;
+
+    customBounds.left = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: 1.5707963267948966 });
+    customBounds.left.addShape(new p2.Plane());
+    // customBounds.left.shapes[0].collisionGroup = mask;
+
+    customBounds.right = new p2.Body({ mass: 0, position: [ sim.pxmi(x + w), sim.pxmi(y) ], angle: -1.5707963267948966 });
+    customBounds.right.addShape(new p2.Plane());
+    // customBounds.right.shapes[0].collisionGroup = mask;
+
+    customBounds.top = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: -3.141592653589793 });
+    customBounds.top.addShape(new p2.Plane());
+    // customBounds.top.shapes[0].collisionGroup = mask;
+
+    customBounds.bottom = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y + h) ] });
+    customBounds.bottom.addShape(new p2.Plane());
+    // customBounds.bottom.shapes[0].collisionGroup = mask;
+
+    sim.world.addBody(customBounds.left);
+    sim.world.addBody(customBounds.right);
+    sim.world.addBody(customBounds.top);
+    sim.world.addBody(customBounds.bottom);
+
 }
 
 function createPlayers(game) {
