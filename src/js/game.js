@@ -5,7 +5,6 @@ window.Phaser = require('phaser/build/custom/phaser-split');require('./game.css'
 var winState = require('./winState.js');
 var testLevel = require('./testlevel/testLevel.js');
 var montyPuzzle = require('./montyPuzzle/montyPuzzle.js');
-var p2test = require('./montyPuzzle/p2test.js');
 
 function Game(gameContainer) {
 
