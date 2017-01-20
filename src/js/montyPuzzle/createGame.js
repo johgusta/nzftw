@@ -14,6 +14,12 @@ module.exports = function createGame(game) {
 
     var bounds = new Phaser.Rectangle(350, 100, 4 * blockSize, 5 * blockSize);
 
+
+    game.boxCollisionGroup = game.physics.p2.createCollisionGroup();
+    game.blocksCollisionGroup = game.physics.p2.createCollisionGroup();
+    game.winningBlockCollisionGroup = game.physics.p2.createCollisionGroup();
+    game.physics.p2.updateBoundsCollisionGroup();
+
     createBackground(game);
 
     createBoxBounds(game, bounds);
@@ -46,7 +52,7 @@ function createBlocks(game) {
         });
     };
 
-    createBlock(game, 1, 0, 2, 2, 'block_1');
+    createBlock(game, 1, 0, 2, 2, 'block_1', true);
     createBlock(game, 0, 0, 1, 2, 'block_2');
     createBlock(game, 3, 0, 1, 2, 'block_3');
     createBlock(game, 0, 2, 1, 2, 'block_4');
@@ -58,7 +64,7 @@ function createBlocks(game) {
     createBlock(game, 3, 4, 1, 1, 'block_10');
 }
 
-function createBlock(game, x, y, width, height, sprite) {
+function createBlock(game, x, y, width, height, sprite, winningBlock) {
 
     var blockId = game.blocks.children.length;
     var blockWidth = width * blockSize;
@@ -74,6 +80,16 @@ function createBlock(game, x, y, width, height, sprite) {
     block.events.onInputDown.add(function () {
         game.blocks.setSelectedBlock(block.blockId);
     });
+
+    if (winningBlock) {
+        block.body.setCollisionGroup(game.winningBlockCollisionGroup);
+        block.body.collides([game.blocksCollisionGroup, game.boxCollisionGroup,
+            game.winningBlockCollisionGroup]);
+    } else {
+        block.body.setCollisionGroup(game.blocksCollisionGroup);
+        block.body.collides([game.blocksCollisionGroup, game.boxCollisionGroup,
+            game.winningBlockCollisionGroup]);
+    }
 }
 
 function createBoxBounds(game, bounds) {
@@ -98,24 +114,25 @@ function createPreviewBounds(game, rectangle) {
 
     var sim = game.physics.p2;
 
-    //  If you want to use your own collision group then set it here and un-comment the lines below
-    var mask = sim.boundsCollisionGroup.mask;
-
     customBounds.left = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: 1.5707963267948966 });
     customBounds.left.addShape(new p2.Plane());
-    // customBounds.left.shapes[0].collisionGroup = mask;
+    customBounds.left.shapes[0].collisionGroup = game.boxCollisionGroup.mask;
+    customBounds.left.shapes[0].collisionMask = game.blocksCollisionGroup.mask | game.winningBlockCollisionGroup.mask;
 
     customBounds.right = new p2.Body({ mass: 0, position: [ sim.pxmi(x + w), sim.pxmi(y) ], angle: -1.5707963267948966 });
     customBounds.right.addShape(new p2.Plane());
-    // customBounds.right.shapes[0].collisionGroup = mask;
+    customBounds.right.shapes[0].collisionGroup = game.boxCollisionGroup.mask;
+    customBounds.right.shapes[0].collisionMask = game.blocksCollisionGroup.mask | game.winningBlockCollisionGroup.mask;
 
     customBounds.top = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y) ], angle: -3.141592653589793 });
     customBounds.top.addShape(new p2.Plane());
-    // customBounds.top.shapes[0].collisionGroup = mask;
+    customBounds.top.shapes[0].collisionGroup = game.boxCollisionGroup.mask;
+    customBounds.top.shapes[0].collisionMask = game.blocksCollisionGroup.mask | game.winningBlockCollisionGroup.mask;
 
     customBounds.bottom = new p2.Body({ mass: 0, position: [ sim.pxmi(x), sim.pxmi(y + h) ] });
     customBounds.bottom.addShape(new p2.Plane());
-    // customBounds.bottom.shapes[0].collisionGroup = mask;
+    customBounds.bottom.shapes[0].collisionGroup = game.boxCollisionGroup.mask;
+    customBounds.bottom.shapes[0].collisionMask = game.blocksCollisionGroup.mask;
 
     sim.world.addBody(customBounds.left);
     sim.world.addBody(customBounds.right);
